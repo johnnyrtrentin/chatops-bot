@@ -1,0 +1,11 @@
+[
+  "hubot-script-shellcmd",
+  "hubot-jenkins",
+  "hubot-env",
+  "hubot-ip",
+  "hubot-redis-brain",
+  "hubot-diagnostics",
+  "hubot-help",
+  "hubot-pugme",
+  "hubot-rules"
+]
