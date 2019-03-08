@@ -23,12 +23,12 @@ WORKDIR /hubot
 ENV EXPRESS_PORT 8086
 
 # INSTALACAO HUBOT
-RUN yo hubot --owner="Johnny Trentin <johnny.trentin@totvs.com.br>" --name="chatOps_E2E" --description="Chatops TOTVS" --adapter=ryver --defaults
+RUN yo hubot --owner="Johnny Trentin <johnny.trentin@totvs.com.br>" --name="chatOps_E2E" --description="Chatops TOTVS" --defaults
 COPY package.json package.json
 ADD external-scripts.json /hubot/
 RUN rm hubot-scripts.json
 ADD scripts/*.coffee /hubot/scripts/
-RUN npm install
+RUN npm install -g
 
 EXPOSE 8086
 
