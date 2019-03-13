@@ -1,45 +1,57 @@
 # Description:
-#   <Integração e serviço de mensagems de build do Jenkins para o Ryver>
+#  Hubot Steps Plugin integration with Ryver Chat.
+#  Plugin: https://github.com/jenkinsci/hubot-steps-plugin#build-notifications
 #
 # Dependencies:
-#   "N/A"
+#   None
 #
 # Configuration:
-#   LIST_OF_ENV_VARS_TO_SET
+#   None
 #
 # Commands:
-#   hubot <trigger> - <what the respond trigger does>
-#   <trigger> - <what the hear trigger does>
+#   None
 #
 # Notes:
-#   <optional notes required for the script>
+#   Installed and configurated the "Hubot Steps Plugin"
 #
 # Author:
-#   <johnnyrtrentin>
-
+#   johnnyrtrentin
 
 module.exports = (robot) ->
     robot.router.post '/hubot/notify/:room', (req, res) ->
 
-        #Enviroment for the room, usage in Hubot Steps Jenkins Plugin
+        #Enviroments
         room = req.params.room
-        #The message for the Room in Ryver
-        message = req.body.message
-        #Enviroment with status of the current build
-        #STARTED/ABORTED/SUCCESS/FAILURE/NOT_BUILT/BACK_TO_NORMAL/UNSTABLE
         status = req.body.status
-
-        stepName = req.body.stepName
-        #Enviroment to say who do the current build.
-        userName = req.body.userName
-        #Environment variable for the current build. 
+        userID = req.body.userId
+        message = req.body.message
         envVars = req.body.envVars
-        #Enviroment to User Name for the builds kicked off by users for others actual build cause. Example TimerTrigger, SCMChange and so on.
-        buildCause = req.body.buildCause
+        userName = req.body.userName
+        extraData = req.body.extraData
 
-        #console.log envVars
-        console.log 'build', buildCause
-        console.log 'username', userName
+        messageHubotPlugin = "\n _#{message}_."
 
-        robot.messageRoom room, "Build: #{envVars.JOB_NAME} + #{message}: #{status}"
-        res.send 'OK'        
+        jobInfo = "Jenkins: » _#{envVars.JOB_NAME}_ » _#{envVars.JOB_NAME}_ _#{envVars.BUILD_DISPLAY_NAME}_"
+        buildSucess = "_Project_ **#{envVars.JOB_NAME}** :large_blue_circle:
+        \n _**#{envVars.BUILD_DISPLAY_NAME}**_ was #{messageHubotPlugin}"
+        buildAborted = "\n * Project: **#{envVars.JOB_NAME}** :white_circle: 
+        \n * Build: **#{envVars.BUILD_DISPLAY_NAME}** 
+        \n * URL of the project: **#{envVars.JOB_DISPLAY_URL}** 
+        \n * Build URL: **#{envVars.BUILD_URL}** 
+        \n * Aborted by user: **#{userName}** 
+        \n * Status of the build: **#{status}.**"
+        buildFailure = "\n * Project: **#{envVars.JOB_NAME}** :red_circle: 
+        \n * Build: **#{envVars.BUILD_DISPLAY_NAME}** 
+        \n * Build URL: #{envVars.BUILD_URL} 
+        \n * Status of the build: **#{status}.**"
+
+        if status == "STARTED"
+            robot.messageRoom room, "**#{jobInfo}** #{messageHubotPlugin}"
+        else if status == "SUCCESS"
+            robot.messageRoom room, buildSucess
+        else if status == "ABORTED"
+            robot.messageRoom room, "**#{jobInfo}** #{buildAborted}"
+        else if status == "FAILURE"
+            robot.messageRoom room, "## #{jobInfo} #{buildFailure}"
+            
+        res.send 'OK'

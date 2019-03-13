@@ -20,8 +20,8 @@ SET HUBOT_RYVER_APP_URL=chatopsteste2.ryver.com
 SET HUBOT_RYVER_JOIN_FORUMS=yes
 SET HUBOT_RYVER_USE_SSL=yes  
 
-rem JENKINS CONIG
+rem JENKINS CONFIG
 SET HUBOT_JENKINS_URL=http://192.168.99.100:8080
 SET HUBOT_JENKINS_AUTH=admin:johnny@123
 
-node_modules\.bin\hubot.cmd%*
+node_modules\.bin\hubot.cmd --name "robo" %*
