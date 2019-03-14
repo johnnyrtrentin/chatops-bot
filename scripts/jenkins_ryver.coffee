@@ -20,7 +20,7 @@
 module.exports = (robot) ->
     robot.router.post '/hubot/notify/:room', (req, res) ->
 
-        #Enviroments
+        #Variables
         room = req.params.room
         status = req.body.status
         userID = req.body.userId
@@ -29,7 +29,7 @@ module.exports = (robot) ->
         userName = req.body.userName
         extraData = req.body.extraData
 
-        messageHubotPlugin = "\n _#{message}_."
+        messageHubotPlugin = "_#{message}_."
 
         jobInfo = "Jenkins: » _#{envVars.JOB_NAME}_ » _#{envVars.JOB_NAME}_ _#{envVars.BUILD_DISPLAY_NAME}_"
         buildSucess = "_Project_ **#{envVars.JOB_NAME}** :large_blue_circle:
@@ -46,11 +46,11 @@ module.exports = (robot) ->
         \n * Status of the build: **#{status}.**"
 
         if status == "STARTED"
-            robot.messageRoom room, "**#{jobInfo}** #{messageHubotPlugin}"
+            robot.messageRoom room, "**#{jobInfo}** \n#{messageHubotPlugin}"
         else if status == "SUCCESS"
             robot.messageRoom room, buildSucess
         else if status == "ABORTED"
-            robot.messageRoom room, "**#{jobInfo}** #{buildAborted}"
+            robot.messageRoom room, "**#{jobInfo}** \n#{buildAborted}"
         else if status == "FAILURE"
             robot.messageRoom room, "## #{jobInfo} #{buildFailure}"
             
