@@ -30,28 +30,30 @@ module.exports = (robot) ->
         extraData = req.body.extraData
 
         messageHubotPlugin = "_#{message}_."
+        logo = "![a](http://mirrors.jenkins.io/art/jenkins-logo/32x32/headshot.png)"
 
         jobInfo = "Jenkins: » _#{envVars.JOB_NAME}_ » _#{envVars.JOB_NAME}_ _#{envVars.BUILD_DISPLAY_NAME}_"
+        
         buildSucess = "_Project_ **#{envVars.JOB_NAME}** :large_blue_circle:
         \n _**#{envVars.BUILD_DISPLAY_NAME}**_ was #{messageHubotPlugin}"
+        
         buildAborted = "\n * Project: **#{envVars.JOB_NAME}** :white_circle: 
         \n * Build: **#{envVars.BUILD_DISPLAY_NAME}** 
         \n * URL of the project: **#{envVars.JOB_DISPLAY_URL}** 
         \n * Build URL: **#{envVars.BUILD_URL}** 
         \n * Aborted by user: **#{userName}** 
         \n * Status of the build: **#{status}.**"
+
         buildFailure = "\n * Project: **#{envVars.JOB_NAME}** :red_circle: 
-        \n * Build: **#{envVars.BUILD_DISPLAY_NAME}** 
-        \n * Build URL: #{envVars.BUILD_URL} 
-        \n * Status of the build: **#{status}.**"
+        \n * Build: **[#{envVars.BUILD_DISPLAY_NAME}](#{envVars.BUILD_URL})**"
 
         if status == "STARTED"
             robot.messageRoom room, "**#{jobInfo}** \n#{messageHubotPlugin}"
         else if status == "SUCCESS"
             robot.messageRoom room, buildSucess
         else if status == "ABORTED"
-            robot.messageRoom room, "**#{jobInfo}** \n#{buildAborted}"
+            robot.messageRoom room, "#{logo} **#{jobInfo}** \n#{buildAborted}"
         else if status == "FAILURE"
-            robot.messageRoom room, "## #{jobInfo} #{buildFailure}"
-            
+            robot.messageRoom room, "## #{logo} #{jobInfo} \n#{buildFailure}"
+
         res.send 'OK'

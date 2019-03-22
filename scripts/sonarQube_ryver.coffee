@@ -18,41 +18,56 @@
 #   johnnyrtrentin
 
 module.exports = (robot) ->
-    server = ""
+    login = process.env.HUBOT_SONAR_USER
+    password = process.env.HUBOT_SONAR_PASSWORD
+
+    sonarLogin = JSON.stringify({
+    login: login
+    password: password
+    })
+
     room = ""
     font = ""
 
-    ##Array com o login e senha do usuário
-    loggin = JSON.stringify({
-    login: ''
-    password: ''
-    })
+    robot.respond /sonar set server (.*)/, (msg) ->
+        server = msg.match[1].replace(/http:\/\//i, '')
+        msg.send "**Sonar** server set to _#{server}_"
 
     ##Faz a autenticação no Sonar
     robot.http("http://#{server}/api/authentication/login")
         .header('Content-Type', 'application/json')
-        .post(loggin)  (err, res, body) ->
-            console.log "ERRO POST: #{err}"
+        .post(sonarLogin)  (err, res, body) ->
 
     ##Verifica a autenticação no Sonar
     robot.http("http://#{server}/api/authentication/validate")
         .get() (err, res, body) ->
-            robot.messageRoom room, "#{body}"
+            robot.messageRoom room, "Autenticação: #{body}"
 
-    ##Verica fontes duplicadoos
-    robot.http("http://#{server}/api/duplications/show?key=#{font}")
+    # ##Verica fontes duplicadoos
+    # robot.http("http://#{server}/api/duplications/show?key=#{font}")
+    #     .get() (err, res, body) ->
+    #         if err
+    #             robot.emit 'FUDEU', err
+    #             return
+
+    #         if res.StatusCode = 200
+    #             # console.log "BODY :#{body}"
+    #             # robot.messageRoom room, "#{body}"
+
+    ##BRANCHES
+    robot.http("http://#{server}/api/project_branches/list?project=projeto")
         .get() (err, res, body) ->
-            console.log "Fontes duplicados #{err} \n#{body} \n #{res}"
+            params = JSON.parse(body)
+            robot.messageRoom room, "#{params.status}"
 
-    ##Verifica a linha do codigo informada
-        robot.http("http://#{server}/api/sources/show?key=#{font}")
-            .get() (err, res, body) ->
-                robot.messageRoom room, "#{err} \n#{body}"
+    # ##Verifica a linha do codigo informada
+    #     robot.http("http://#{server}/api/sources/show?key=#{font}")
+    #         .get() (err, res, body) ->
+    #             robot.messageRoom room, "#{err} \n#{body}"
 
     # robot.http("http://#{server}/api/project_links/search?projectKey=JS-Teste")
     #     .get() (err, res, body) ->
     #         resource = JSON.stringify (body)
-            
     #         console.log "BODY: #{resource} \n"
     #         console.log "RES: #{res} \n"
     #         console.log "ERR: #{err}"
