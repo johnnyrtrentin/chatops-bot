@@ -47,6 +47,10 @@ module.exports = (robot) ->
         buildFailure = "\n * Project: **#{envVars.JOB_NAME}** :red_circle: 
         \n * Build: **[#{envVars.BUILD_DISPLAY_NAME}](#{envVars.BUILD_URL})**"
 
+        buildBackNormal = "Project **[#{envVars.JOB_NAME}](#{envVars.JOB_DISPLAY_URL})** :rain_cloud: _is back to normal!_"
+
+        buildUnstable = "Project **[#{envVars.JOB_NAME}](#{envVars.JOB_DISPLAY_URL})** :thunder_cloud_and_rain: _is unstable!_"
+
         if status == "STARTED"
             robot.messageRoom room, "**#{jobInfo}** \n#{messageHubotPlugin}"
         else if status == "SUCCESS"
@@ -54,6 +58,10 @@ module.exports = (robot) ->
         else if status == "ABORTED"
             robot.messageRoom room, "#{logo} **#{jobInfo}** \n#{buildAborted}"
         else if status == "FAILURE"
-            robot.messageRoom room, "## #{logo} #{jobInfo} \n#{buildFailure}"
+            robot.messageRoom room, buildFailure
+        else if status == "BACK_TO_NORMAL"
+            robot.messageRoom room, buildBackNormal
+        else if status == "UNSTABLE"
+            robot.messageRoom room, buildUnstable
 
         res.send 'OK'
