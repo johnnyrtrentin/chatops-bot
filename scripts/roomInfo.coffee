@@ -1,4 +1,4 @@
 module.exports = (robot) ->
-#Descobrir o ID da sala RYVER
+#Find it out the ID of your ryver room
     robot.hear /room info/, (msg) ->
         msg.send "Room: #{msg.message.room}"
