@@ -1,11 +1,6 @@
 [
-  "hubot-script-shellcmd",
   "hubot-jirabot",
   "hubot-jenkins-enhanced",
   "hubot-redis-brain",
-  "hubot-env",
-  "hubot-diagnostics",
-  "hubot-help",
-  "hubot-pugme",
-  "hubot-rules"
+  "hubot-help"
 ]
