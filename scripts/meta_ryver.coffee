@@ -12,37 +12,50 @@ module.exports = (robot) ->
 
     coverageOfEachProject = () ->
         #FND - UCL
-        robot.http("#{sonarURL}/api/measures/component?componentKey=foundation&metricKeys=uncovered_lines")
-            .get() (err, res, body) ->
-                bodyReq = JSON.parse body
-                meta.uclFnd = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
+        requestOne = ->
+            new Promise (resolve) ->
+                robot.http("#{sonarUrl}/api/measures/component?componentKey=foundation&metricKeys=uncovered_lines")
+                    .get() (err, res, body) ->
+                        bodyReq = JSON.parse body
+                        resolve meta.uclFnd = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
         #FND - LTC
-        robot.http("#{sonarUrl}/api/measures/component?componentKey=foundation&metricKeys=lines_to_cover")
-            .get() (err, res, body) ->
-                bodyReq = JSON.parse body
-                meta.ltcFnd = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
+        requestTwo = ->
+            new Promise (resolve) ->
+                robot.http("#{sonarUrl}/api/measures/component?componentKey=foundation&metricKeys=lines_to_cover")
+                    .get() (err, res, body) ->
+                        bodyReq = JSON.parse body
+                        resolve meta.ltcFnd = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
         #NewFND - UCL
-        robot.http("#{sonarUrl}/api/measures/component?componentKey=foundation-nfrw&metricKeys=uncovered_lines")
-            .get() (err, res, body) ->
-                bodyReq = JSON.parse body
-                meta.uclNewFnd = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
+        requestThree = ->
+            new Promise (resolve) ->
+                robot.http("#{sonarUrl}/api/measures/component?componentKey=foundation-nfrw&metricKeys=uncovered_lines")
+                    .get() (err, res, body) ->
+                        bodyReq = JSON.parse body
+                        resolve meta.uclNewFnd = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
         #NewFND - LTC
-        robot.http("#{sonarUrl}/api/measures/component?componentKey=foundation-nfrw&metricKeys=lines_to_cover")
-            .get() (err, res, body) ->
-                bodyReq = JSON.parse body
-                meta.ltcNewFnd = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
+        requestFour = ->
+            new Promise (resolve) ->
+                robot.http("#{sonarUrl}/api/measures/component?componentKey=foundation-nfrw&metricKeys=lines_to_cover")
+                    .get() (err, res, body) ->
+                        bodyReq = JSON.parse body
+                        resolve meta.ltcNewFnd = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
         #EAI2 - UCL
-        robot.http("#{sonarUrl}/api/measures/component?componentKey=eai2-progress&metricKeys=uncovered_lines")
-            .get() (err, res, body) ->
-                bodyReq = JSON.parse body
-                meta.uclEAI2 = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
+        requestFive = ->
+            new Promise (resolve) ->
+                robot.http("#{sonarUrl}/api/measures/component?componentKey=eai2-progress&metricKeys=uncovered_lines")
+                    .get() (err, res, body) ->
+                        bodyReq = JSON.parse body
+                        resolve meta.uclEAI2 = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
         #EAI2 - LTC
-        robot.http("#{sonarUrl}/api/measures/component?componentKey=eai2-progress&metricKeys=lines_to_cover")
-            .get() (err, res, body) ->
-                bodyReq = JSON.parse body
-                meta.ltcEAI2 = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
+        requestSix = ->
+            new Promise (resolve) ->
+                robot.http("#{sonarUrl}/api/measures/component?componentKey=eai2-progress&metricKeys=lines_to_cover")
+                    .get() (err, res, body) ->
+                        bodyReq = JSON.parse body
+                        resolve meta.ltcEAI2 = JSON.stringify(bodyReq.component.measures[0].value).replace(/"/g, '')
 
-        calculateCoverage()
+        Promise.all([requestOne(), requestTwo(), requestThree(), requestFour(), requestFour(), requestSix()]).then () ->
+            calculateCoverage()
 
     calculateCoverage = () ->
         meta.ltcTotal = parseInt(meta.ltcFnd) + parseInt(meta.ltcNewFnd) + parseInt(meta.ltcEAI2)
