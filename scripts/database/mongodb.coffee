@@ -1,9 +1,6 @@
+currentDate = require '../services/date'
 mongoDB = require('mongodb').MongoClient
 mongoURL = ''
-
-date = new Date
-currentDate = "#{if date.getDate() < 10 then '0' + date.getDate() else date.getDate()}/" +
-            "#{if (date.getMonth() + 1) < 10 then '0' + (date.getMonth() + 1) else (date.getMonth() + 1)}/#{date.getFullYear()}"
 
 exports.insertCoverage = (json) ->
     new Promise (resolve, reject) ->
